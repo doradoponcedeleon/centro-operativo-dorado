@@ -1,0 +1,13 @@
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#0b0f14;color:#e5e7eb}
+.top{padding:12px;border-bottom:1px solid #1f2937;background:#0f172a;position:sticky;top:0}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.wrap{max-width:1000px;margin:0 auto;padding:12px}
+.card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px}
+.list{display:grid;gap:10px}
+.item{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:10px}
+input,select,textarea,button{font-size:15px;padding:10px;border-radius:10px;border:1px solid #1f2937;background:#0f172a;color:#e5e7eb}
+button{cursor:pointer}
+.primary{background:#2563eb;border-color:#1d4ed8}
+.file{border:1px dashed #1f2937;padding:8px 10px;border-radius:10px}
+.file input{display:none}

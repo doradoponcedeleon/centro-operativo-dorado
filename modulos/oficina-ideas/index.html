@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Oficina de Ideas</title>
+  <link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+  <header class="top">
+    <h1>Oficina de Ideas</h1>
+    <div class="row">
+      <button id="btn-new" class="primary">Nueva idea</button>
+      <button id="btn-export">Exportar JSON</button>
+      <label class="file">Importar JSON<input id="file-import" type="file" accept="application/json"/></label>
+      <a href="../../index.html">← Volver</a>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="row">
+        <input id="q" placeholder="Buscar por texto o etiqueta"/>
+        <select id="drawer">
+          <option value="">Todos los cajones</option>
+          <option value="captura">Captura</option>
+          <option value="prototipo">Prototipo</option>
+          <option value="validacion">Validación</option>
+          <option value="archivo">Archivo</option>
+        </select>
+        <button id="btn-mic">🎙️ Dictar</button>
+      </div>
+    </section>
+
+    <section id="list" class="list"></section>
+  </main>
+
+  <dialog id="dlg">
+    <form method="dialog" id="form">
+      <h2 id="dlg-title">Nueva idea</h2>
+      <input type="hidden" id="i-id"/>
+      <label>Título</label>
+      <input id="i-title" required/>
+      <label>Descripción</label>
+      <textarea id="i-text" rows="5"></textarea>
+      <label>Cajón</label>
+      <select id="i-drawer">
+        <option value="captura">Captura</option>
+        <option value="prototipo">Prototipo</option>
+        <option value="validacion">Validación</option>
+        <option value="archivo">Archivo</option>
+      </select>
+      <label>Etiquetas (coma)</label>
+      <input id="i-tags"/>
+      <div class="row">
+        <button value="cancel">Cancelar</button>
+        <button class="primary" id="i-save" value="default">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
