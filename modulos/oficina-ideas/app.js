@@ -133,25 +133,66 @@ function bind(){
 
 // Web Speech API (dictado)
 let rec = null;
+let recording = false;
 function initSpeech(){
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if(!SR){ $('btn-mic').disabled=true; $('btn-mic').textContent='🎙️ No disponible'; return; }
   rec = new SR();
   rec.lang = 'es-ES';
-  rec.interimResults = false;
+  rec.interimResults = true;
+  rec.continuous = true;
   rec.onresult = (e)=>{
-    const t = e.results[0][0].transcript;
-    $('i-text').value = ( $('i-text').value + ' ' + t ).trim();
+    let finalText = '';
+    let interim = '';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const r = e.results[i];
+      if(r.isFinal) finalText += r[0].transcript + ' ';
+      else interim += r[0].transcript + ' ';
+    }
+    if(finalText.trim()){
+      $('i-text').value = ( $('i-text').value + ' ' + finalText.trim() ).trim();
+    }
+    $('live').textContent = `Transcripción en vivo: ${interim.trim() || '—'}`;
+  };
+  rec.onerror = ()=>{ $('mic-status').textContent='Micrófono con error'; };
+  rec.onend = ()=>{
+    recording = false;
+    $('btn-mic').textContent = '🎙️ Dictar';
+    $('mic-status').textContent = 'Micrófono listo';
+    $('live').textContent = 'Transcripción en vivo: —';
   };
 }
 
 $('btn-mic').addEventListener('click', ()=>{
   if(!rec){ initSpeech(); }
   if(!rec) return;
+  if(recording){
+    rec.stop();
+    return;
+  }
+  recording = true;
+  $('btn-mic').textContent = '⏹️ Detener dictado';
+  $('mic-status').textContent = 'Escuchando…';
   rec.start();
   // abre diálogo si no está abierto
   if(!$('dlg').open) openDlg();
 });
+
+(function setupTemplates(){
+  const templates = {
+    desc: "Idea:\\n- Descripción:\\n- Próximo paso:\\n- Recursos:",
+    problema: "Problema:\\n- Causa raíz:\\n- Solución propuesta:\\n- Impacto esperado:",
+    experimento: "Hipótesis:\\n- Experimento:\\n- Métrica de éxito:\\n- Resultado:",
+    pitch: "Pitch:\\n- Para quién:\\n- Qué duele:\\n- Propuesta:"
+  };
+  $('btn-tpl').addEventListener('click', ()=>{
+    const key = $('tpl').value;
+    if(!key) return;
+    const t = templates[key];
+    $('i-text').value = ($('i-text').value + ( $('i-text').value ? "\\n\\n" : "" ) + t).trim();
+    if(!$('dlg').open) openDlg();
+  });
+})();
 
 (async ()=>{
   await load();

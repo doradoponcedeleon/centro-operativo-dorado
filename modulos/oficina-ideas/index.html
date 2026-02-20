@@ -29,7 +29,19 @@
           <option value="archivo">Archivo</option>
         </select>
         <button id="btn-mic">🎙️ Dictar</button>
+        <span id="mic-status" class="badge">Micrófono listo</span>
       </div>
+      <div class="row" style="margin-top:8px">
+        <select id="tpl">
+          <option value="">Plantillas rápidas…</option>
+          <option value="desc">Idea + Descripción + Próximo paso</option>
+          <option value="problema">Problema / Solución / Impacto</option>
+          <option value="experimento">Hipótesis / Experimento / Métrica</option>
+          <option value="pitch">Pitch corto</option>
+        </select>
+        <button id="btn-tpl">Insertar plantilla</button>
+      </div>
+      <div id="live" class="live">Transcripción en vivo: —</div>
     </section>
 
     <section id="list" class="list"></section>
