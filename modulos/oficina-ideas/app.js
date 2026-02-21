@@ -136,6 +136,12 @@ function bind(){
   });
   $('btn-export').addEventListener('click', exportJSON);
   $('file-import').addEventListener('change', (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); });
+  $('btn-sync').addEventListener('click', async ()=>{
+    $('sync-status').textContent = 'Sincronización: enviando...';
+    await syncToCloud();
+    $('sync-status').textContent = 'Sincronización: leyendo...';
+    await loadFromCloud();
+  });
 }
 
 // Web Speech API (dictado)
@@ -230,7 +236,10 @@ async function loadFromCloud(){
       store.clear();
       ideas.forEach(i=>store.put(i));
       render();
+      $('sync-status').textContent = 'Sincronización: OK (cargado)';
+      return;
     }
+    $('sync-status').textContent = 'Sincronización: sin datos';
   }catch(e){}
 }
 
@@ -260,5 +269,6 @@ async function syncToCloud(){
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify([payload])
     });
+    $('sync-status').textContent = 'Sincronización: OK (enviado)';
   }catch(e){}
 }
