@@ -248,6 +248,7 @@ async function supaFetch(path, options={}){
 
 async function loadFromCloud(){
   try{
+    $('sync-status').textContent = 'Sincronización: leyendo...';
     const rows = await supaFetch(`${SUPABASE_TABLE}?id=eq.${SUPABASE_ID}&select=data`, { method: 'GET' });
     if(rows && rows[0] && rows[0].data){
       const data = rows[0].data;
@@ -258,7 +259,10 @@ async function loadFromCloud(){
       renderDashboard();
       renderProyectos();
       renderBitacora();
+      $('sync-status').textContent = 'Sincronización: OK (cargado)';
+      return;
     }
+    $('sync-status').textContent = 'Sincronización: sin datos';
   }catch(e){}
 }
 
@@ -270,6 +274,7 @@ function scheduleCloudSync(){
 
 async function syncToCloud(){
   try{
+    $('sync-status').textContent = 'Sincronización: enviando...';
     const ideas = await readIdeas();
     const payload = {
       id: SUPABASE_ID,
@@ -284,6 +289,7 @@ async function syncToCloud(){
       headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
       body: JSON.stringify([payload])
     });
+    $('sync-status').textContent = 'Sincronización: OK (enviado)';
   }catch(e){}
 }
 
@@ -314,6 +320,10 @@ function bind(){
   $('file-import').addEventListener('change', (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); });
   $('btn-export-all').addEventListener('click', exportAll);
   $('file-import-all').addEventListener('change', (e)=>{ if(e.target.files[0]) importAll(e.target.files[0]); });
+  $('btn-sync').addEventListener('click', async ()=>{
+    await syncToCloud();
+    await loadFromCloud();
+  });
 }
 
 load();

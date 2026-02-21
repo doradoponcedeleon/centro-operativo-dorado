@@ -11,6 +11,7 @@ body{margin:0;font-family:system-ui,Segoe UI,Arial;background:#0b0f14;color:#e5e
 .card{background:#111827;border:1px solid #1f2937;border-radius:14px;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,.2)}
 .grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
 .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.syncrow{margin-top:6px}
 .list{display:grid;gap:10px}
 input,select,textarea,button{font-size:16px;padding:12px;border-radius:10px;border:1px solid #1f2937;background:#0f172a;color:#e5e7eb}
 button{cursor:pointer}
