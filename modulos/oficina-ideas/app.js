@@ -1,6 +1,10 @@
 const $ = (id)=>document.getElementById(id);
 const DB_NAME = 'oficina_ideas_db';
 const STORE = 'ideas';
+const SUPABASE_URL = 'https://yxyzggisvwjjgxydativ.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_dnchkTsAhIxINM97-Si6yw_eWeZ9fDI';
+const SUPABASE_TABLE = 'cod_data';
+const SUPABASE_ID = 'main';
 let db = null;
 let ideas = [];
 
@@ -27,11 +31,13 @@ async function load(){
 function saveIdea(item){
   const tx = db.transaction(STORE, 'readwrite');
   tx.objectStore(STORE).put(item);
+  scheduleCloudSync();
 }
 
 function deleteIdea(id){
   const tx = db.transaction(STORE, 'readwrite');
   tx.objectStore(STORE).delete(id);
+  scheduleCloudSync();
 }
 
 function render(){
@@ -109,6 +115,7 @@ function importJSON(file){
         store.clear();
         ideas.forEach(i=>store.put(i));
         render();
+        scheduleCloudSync();
       }else{
         alert('JSON inválido');
       }
@@ -199,4 +206,59 @@ $('btn-mic').addEventListener('click', ()=>{
   bind();
   initSpeech();
   render();
+  loadFromCloud();
 })();
+
+async function supaFetch(path, options={}){
+  const headers = Object.assign({
+    'apikey': SUPABASE_ANON,
+    'Authorization': `Bearer ${SUPABASE_ANON}`,
+    'Content-Type': 'application/json',
+  }, options.headers || {});
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers });
+  if(!res.ok) throw new Error('Supabase error');
+  return res.status === 204 ? null : res.json();
+}
+
+async function loadFromCloud(){
+  try{
+    const rows = await supaFetch(`${SUPABASE_TABLE}?id=eq.${SUPABASE_ID}&select=data`, { method: 'GET' });
+    if(rows && rows[0] && rows[0].data && rows[0].data.ideas){
+      ideas = rows[0].data.ideas;
+      const tx = db.transaction(STORE, 'readwrite');
+      const store = tx.objectStore(STORE);
+      store.clear();
+      ideas.forEach(i=>store.put(i));
+      render();
+    }
+  }catch(e){}
+}
+
+let syncTimer = null;
+function scheduleCloudSync(){
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncToCloud, 800);
+}
+
+async function syncToCloud(){
+  try{
+    let base = { proyectos: [], bitacora: [], ideas: [] };
+    try{
+      const rows = await supaFetch(`${SUPABASE_TABLE}?id=eq.${SUPABASE_ID}&select=data`, { method: 'GET' });
+      if(rows && rows[0] && rows[0].data) base = rows[0].data;
+    }catch(e){}
+    const payload = {
+      id: SUPABASE_ID,
+      data: {
+        proyectos: base.proyectos || [],
+        bitacora: base.bitacora || [],
+        ideas
+      }
+    };
+    await supaFetch(`${SUPABASE_TABLE}?on_conflict=id`, {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify([payload])
+    });
+  }catch(e){}
+}

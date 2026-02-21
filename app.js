@@ -13,6 +13,12 @@ const state = {
 };
 
 const STORAGE_KEY = 'cod-data-v1';
+const SUPABASE_URL = 'https://yxyzggisvwjjgxydativ.supabase.co';
+const SUPABASE_ANON = 'sb_publishable_dnchkTsAhIxINM97-Si6yw_eWeZ9fDI';
+const SUPABASE_TABLE = 'cod_data';
+const SUPABASE_ID = 'main';
+const IDEAS_DB = 'oficina_ideas_db';
+const IDEAS_STORE = 'ideas';
 
 function load(){
   try{
@@ -26,6 +32,7 @@ function load(){
 }
 function save(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  scheduleCloudSync();
 }
 
 function setView(name){
@@ -158,9 +165,126 @@ function importJSON(file){
       renderProyectos();
       renderBitacora();
       alert('Importación lista.');
+      scheduleCloudSync();
     }catch(e){ alert('JSON inválido.'); }
   };
   reader.readAsText(file);
+}
+
+function openIdeasDB(){
+  return new Promise((res, rej)=>{
+    const req = indexedDB.open(IDEAS_DB, 1);
+    req.onupgradeneeded = ()=>{
+      const db = req.result;
+      if(!db.objectStoreNames.contains(IDEAS_STORE)) db.createObjectStore(IDEAS_STORE, {keyPath:'id'});
+    };
+    req.onsuccess = ()=>res(req.result);
+    req.onerror = ()=>rej(req.error);
+  });
+}
+
+async function readIdeas(){
+  try{
+    const db = await openIdeasDB();
+    const tx = db.transaction(IDEAS_STORE, 'readonly');
+    const store = tx.objectStore(IDEAS_STORE);
+    const req = store.getAll();
+    return await new Promise((res)=>{ req.onsuccess = ()=>res(req.result || []); });
+  }catch(e){ return []; }
+}
+
+async function writeIdeas(list){
+  const db = await openIdeasDB();
+  const tx = db.transaction(IDEAS_STORE, 'readwrite');
+  const store = tx.objectStore(IDEAS_STORE);
+  store.clear();
+  (list||[]).forEach(i=>store.put(i));
+}
+
+async function exportAll(){
+  const ideas = await readIdeas();
+  const payload = {
+    proyectos: state.proyectos,
+    bitacora: state.bitacora,
+    ideas
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'centro-operativo-dorado-todo.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function importAll(file){
+  const reader = new FileReader();
+  reader.onload = async () => {
+    try{
+      const data = JSON.parse(reader.result);
+      state.proyectos = data.proyectos || [];
+      state.bitacora = data.bitacora || [];
+      await writeIdeas(data.ideas || []);
+      save();
+      renderDashboard();
+      renderProyectos();
+      renderBitacora();
+      alert('Importación total lista.');
+      scheduleCloudSync();
+    }catch(e){ alert('JSON inválido.'); }
+  };
+  reader.readAsText(file);
+}
+
+async function supaFetch(path, options={}){
+  const headers = Object.assign({
+    'apikey': SUPABASE_ANON,
+    'Authorization': `Bearer ${SUPABASE_ANON}`,
+    'Content-Type': 'application/json',
+  }, options.headers || {});
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers });
+  if(!res.ok) throw new Error('Supabase error');
+  return res.status === 204 ? null : res.json();
+}
+
+async function loadFromCloud(){
+  try{
+    const rows = await supaFetch(`${SUPABASE_TABLE}?id=eq.${SUPABASE_ID}&select=data`, { method: 'GET' });
+    if(rows && rows[0] && rows[0].data){
+      const data = rows[0].data;
+      state.proyectos = data.proyectos || [];
+      state.bitacora = data.bitacora || [];
+      await writeIdeas(data.ideas || []);
+      save();
+      renderDashboard();
+      renderProyectos();
+      renderBitacora();
+    }
+  }catch(e){}
+}
+
+let syncTimer = null;
+function scheduleCloudSync(){
+  if(syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(syncToCloud, 800);
+}
+
+async function syncToCloud(){
+  try{
+    const ideas = await readIdeas();
+    const payload = {
+      id: SUPABASE_ID,
+      data: {
+        proyectos: state.proyectos,
+        bitacora: state.bitacora,
+        ideas
+      }
+    };
+    await supaFetch(`${SUPABASE_TABLE}?on_conflict=id`, {
+      method: 'POST',
+      headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify([payload])
+    });
+  }catch(e){}
 }
 
 function bind(){
@@ -188,6 +312,8 @@ function bind(){
 
   $('btn-export').addEventListener('click', exportJSON);
   $('file-import').addEventListener('change', (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); });
+  $('btn-export-all').addEventListener('click', exportAll);
+  $('file-import-all').addEventListener('change', (e)=>{ if(e.target.files[0]) importAll(e.target.files[0]); });
 }
 
 load();
@@ -196,3 +322,4 @@ renderDashboard();
 renderProyectos();
 renderBitacora();
 setView('dashboard');
+loadFromCloud();
