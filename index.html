@@ -88,6 +88,15 @@
 
     <section id="view-modulos" class="view hidden">
       <h1>Módulos</h1>
+      <div class="card" style="margin-bottom:12px">
+        <div class="small">Guarda la ruta local (Termux) para cada módulo:</div>
+        <div class="row" style="margin:8px 0">
+          <input id="new-module-name" placeholder="Nombre del módulo" />
+          <input id="new-module-path" placeholder="/data/data/..." />
+          <button id="btn-add-module">Agregar módulo</button>
+        </div>
+        <div id="module-paths" class="list"></div>
+      </div>
       <div class="grid">
         <a class="card link" href="modulos/oficina-ideas/index.html">Oficina de Ideas</a>
         <a class="card link" href="modulos/mama-salud/index.html">Mamá Salud</a>
@@ -139,6 +148,8 @@
       <input id="p-tags"/>
       <label>Próximo paso</label>
       <input id="p-next"/>
+      <label>Ruta local (Termux)</label>
+      <input id="p-path" placeholder="/data/data/com.termux/files/home/..."/>
       <label>Notas</label>
       <textarea id="p-notas" rows="4"></textarea>
       <div class="row">

@@ -13,6 +13,17 @@ const state = {
 };
 
 const STORAGE_KEY = 'cod-data-v1';
+let MODULES = [
+  {id:'oficina-ideas', name:'Oficina de Ideas'},
+  {id:'mama-salud', name:'Mamá Salud'},
+  {id:'abc-de-vicky', name:'ABC de Vicky'},
+  {id:'audio-sagrado', name:'Audio Sagrado'},
+  {id:'kits-fisica', name:'Kits Física'},
+  {id:'maker-lab', name:'Maker Lab'}
+];
+const MODULES_KEY = 'cod-module-paths-v1';
+const MODULES_LIST_KEY = 'cod-module-list-v1';
+
 const SUPABASE_URL = 'https://yxyzggisvwjjgxydativ.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_dnchkTsAhIxINM97-Si6yw_eWeZ9fDI';
 const SUPABASE_TABLE = 'cod_data';
@@ -89,6 +100,7 @@ function renderProyectos(){
       </div>
       <div class="small">Etiquetas: ${(p.tags||[]).join(', ') || '—'}</div>
       <div class="small">Próximo: ${p.next || '—'}</div>
+      <div class="small">Ruta local: ${p.path || '—'}</div>
       <div class="row">
         <button data-id="${p.id}" class="edit">Editar</button>
         <button data-id="${p.id}" class="del">Eliminar</button>
@@ -119,6 +131,7 @@ function openDialog(p){
   $('p-tags').value = (p?.tags||[]).join(', ');
   $('p-next').value = p?.next || '';
   $('p-notas').value = p?.notas || '';
+  $('p-path').value = p?.path || '';
   $('dlg-title').textContent = p ? 'Editar proyecto' : 'Nuevo proyecto';
 }
 
@@ -130,7 +143,8 @@ function upsertProject(){
     estado: $('p-estado').value,
     tags: $('p-tags').value.split(',').map(s=>s.trim()).filter(Boolean),
     next: $('p-next').value.trim(),
-    notas: $('p-notas').value.trim()
+    notas: $('p-notas').value.trim(),
+    path: $('p-path').value.trim()
   };
   const idx = state.proyectos.findIndex(p=>p.id===id);
   if(idx>=0) state.proyectos[idx]=data; else state.proyectos.push(data);
@@ -324,6 +338,47 @@ async function loadFromPath(path){
   }
 }
 
+
+
+function loadModuleList(){
+  try{ return JSON.parse(localStorage.getItem(MODULES_LIST_KEY) || '[]'); }catch(e){ return []; }
+}
+function saveModuleList(list){
+  localStorage.setItem(MODULES_LIST_KEY, JSON.stringify(list));
+}
+
+function loadModulePaths(){
+  try{ return JSON.parse(localStorage.getItem(MODULES_KEY) || '{}'); }catch(e){ return {}; }
+}
+function saveModulePaths(map){
+  localStorage.setItem(MODULES_KEY, JSON.stringify(map));
+}
+function renderModulePaths(){
+  const host = $('module-paths');
+  if(!host) return;
+  const map = loadModulePaths();
+  host.innerHTML = '';
+  const allModules = MODULES.concat(loadModuleList());
+  allModules.forEach(m=>{
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `
+      <div style="min-width:180px;font-weight:700">${m.name}</div>
+      <input data-mid="${m.id}" value="${map[m.id]||''}" placeholder="/data/data/..." style="flex:1"/>
+      <button data-save="${m.id}">Guardar</button>
+    `;
+    host.appendChild(row);
+  });
+  host.addEventListener('click', (e)=>{
+    const id = e.target.getAttribute('data-save');
+    if(!id) return;
+    const input = host.querySelector(`input[data-mid="${id}"]`);
+    const map = loadModulePaths();
+    map[id] = input.value.trim();
+    saveModulePaths(map);
+  });
+}
+
 function bind(){
   document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click', ()=>setView(b.dataset.view)));
   $('btn-new').addEventListener('click', ()=>openDialog());
@@ -359,6 +414,22 @@ function bind(){
     await syncToCloud();
     await loadFromCloud();
   });
+
+  $('btn-add-module').addEventListener('click', ()=>{
+    const name = $('new-module-name').value.trim();
+    const path = $('new-module-path').value.trim();
+    if(!name) return;
+    const id = name.toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'');
+    const list = loadModuleList();
+    if(!list.some(m=>m.id===id)) list.push({id, name});
+    saveModuleList(list);
+    const map = loadModulePaths();
+    map[id] = path;
+    saveModulePaths(map);
+    $('new-module-name').value='';
+    $('new-module-path').value='';
+    renderModulePaths();
+  });
 }
 
 load();
@@ -366,5 +437,6 @@ bind();
 renderDashboard();
 renderProyectos();
 renderBitacora();
+renderModulePaths();
 setView('dashboard');
 loadFromCloud();
