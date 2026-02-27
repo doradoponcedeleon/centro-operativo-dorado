@@ -102,6 +102,7 @@ function renderProyectos(){
       <div class="small">Etiquetas: ${(p.tags||[]).join(', ') || '—'}</div>
       <div class="small">Próximo: ${p.next || '—'}</div>
       <div class="small">Ruta local: ${p.path || '—'}</div>
+      <div class="small">URL: ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">${p.url}</a>` : '—'}</div>
       <div class="row">
         <button data-id="${p.id}" class="edit">Editar</button>
         <button data-id="${p.id}" class="del">Eliminar</button>
@@ -133,6 +134,7 @@ function openDialog(p){
   $('p-next').value = p?.next || '';
   $('p-notas').value = p?.notas || '';
   $('p-path').value = p?.path || '';
+  $('p-url').value = p?.url || '';
   $('dlg-title').textContent = p ? 'Editar proyecto' : 'Nuevo proyecto';
 }
 
@@ -145,7 +147,8 @@ function upsertProject(){
     tags: $('p-tags').value.split(',').map(s=>s.trim()).filter(Boolean),
     next: $('p-next').value.trim(),
     notas: $('p-notas').value.trim(),
-    path: $('p-path').value.trim()
+    path: $('p-path').value.trim(),
+    url: $('p-url').value.trim()
   };
   const idx = state.proyectos.findIndex(p=>p.id===id);
   if(idx>=0) state.proyectos[idx]=data; else state.proyectos.push(data);
