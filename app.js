@@ -380,7 +380,7 @@ function renderModulePaths(){
       <input data-mid="${m.id}" value="${map[m.id]||''}" placeholder="/data/data/..." style="flex:1"/>
       <input data-uid="${m.id}" value="${urls[m.id]||''}" placeholder="https://..." style="flex:1"/>
       <button data-save="${m.id}">Guardar</button>
-      <button data-open="${m.id}">Abrir URL</button>
+      <a class="openlink" href="${(urls[m.id]||"#")}" target="_blank" rel="noopener">Abrir URL</a>
     `;
     host.appendChild(row);
   });
