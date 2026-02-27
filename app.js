@@ -303,6 +303,27 @@ async function syncToCloud(){
   }catch(e){}
 }
 
+
+async function loadFromPath(path){
+  try{
+    $('sync-status').textContent = 'Sincronización: leyendo ruta...';
+    const url = `http://127.0.0.1:8091/load?path=${encodeURIComponent(path)}`;
+    const res = await fetch(url);
+    if(!res.ok) throw new Error('No se pudo leer la ruta');
+    const data = await res.json();
+    state.proyectos = data.proyectos || [];
+    state.bitacora = data.bitacora || [];
+    await writeIdeas(data.ideas || []);
+    save();
+    renderDashboard();
+    renderProyectos();
+    renderBitacora();
+    $('sync-status').textContent = 'Sincronización: OK (ruta cargada)';
+  }catch(e){
+    $('sync-status').textContent = 'Sincronización: error al leer ruta';
+  }
+}
+
 function bind(){
   document.querySelectorAll('.navbtn').forEach(b=>b.addEventListener('click', ()=>setView(b.dataset.view)));
   $('btn-new').addEventListener('click', ()=>openDialog());
@@ -330,6 +351,10 @@ function bind(){
   $('file-import').addEventListener('change', (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); });
   $('btn-export-all').addEventListener('click', exportAll);
   $('file-import-all').addEventListener('change', (e)=>{ if(e.target.files[0]) importAll(e.target.files[0]); });
+  $('btn-load-path').addEventListener('click', ()=>{
+    const p = $('path-input').value.trim();
+    if(p) loadFromPath(p);
+  });
   $('btn-sync').addEventListener('click', async ()=>{
     await syncToCloud();
     await loadFromCloud();
