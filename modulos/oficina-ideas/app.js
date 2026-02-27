@@ -221,9 +221,15 @@ async function supaFetch(path, options={}){
     'Authorization': `Bearer ${SUPABASE_ANON}`,
     'Content-Type': 'application/json',
   }, options.headers || {});
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers });
-  if(!res.ok) throw new Error('Supabase error');
-  return res.status === 204 ? null : res.json();
+  const ctrl = new AbortController();
+  const t = setTimeout(()=>ctrl.abort(), 6000);
+  try{
+    const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers, signal: ctrl.signal });
+    if(!res.ok) throw new Error('Supabase error');
+    return res.status === 204 ? null : res.json();
+  } finally {
+    clearTimeout(t);
+  }
 }
 
 async function loadFromCloud(){
@@ -240,7 +246,9 @@ async function loadFromCloud(){
       return;
     }
     $('sync-status').textContent = 'Sincronización: sin datos';
-  }catch(e){}
+  }catch(e){
+    $('sync-status').textContent = 'Sincronización: error al leer';
+  }
 }
 
 let syncTimer = null;
@@ -270,5 +278,7 @@ async function syncToCloud(){
       body: JSON.stringify([payload])
     });
     $('sync-status').textContent = 'Sincronización: OK (enviado)';
-  }catch(e){}
+  }catch(e){
+    $('sync-status').textContent = 'Sincronización: error al enviar';
+  }
 }
