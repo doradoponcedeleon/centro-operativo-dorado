@@ -23,6 +23,7 @@ let MODULES = [
 ];
 const MODULES_KEY = 'cod-module-paths-v1';
 const MODULES_LIST_KEY = 'cod-module-list-v1';
+const MODULES_URL_KEY = 'cod-module-url-v1';
 
 const SUPABASE_URL = 'https://yxyzggisvwjjgxydativ.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_dnchkTsAhIxINM97-Si6yw_eWeZ9fDI';
@@ -340,6 +341,14 @@ async function loadFromPath(path){
 
 
 
+
+function loadModuleUrls(){
+  try{ return JSON.parse(localStorage.getItem(MODULES_URL_KEY) || '{}'); }catch(e){ return {}; }
+}
+function saveModuleUrls(map){
+  localStorage.setItem(MODULES_URL_KEY, JSON.stringify(map));
+}
+
 function loadModuleList(){
   try{ return JSON.parse(localStorage.getItem(MODULES_LIST_KEY) || '[]'); }catch(e){ return []; }
 }
@@ -357,6 +366,7 @@ function renderModulePaths(){
   const host = $('module-paths');
   if(!host) return;
   const map = loadModulePaths();
+  const urls = loadModuleUrls();
   host.innerHTML = '';
   const allModules = MODULES.concat(loadModuleList());
   allModules.forEach(m=>{
@@ -365,7 +375,9 @@ function renderModulePaths(){
     row.innerHTML = `
       <div style="min-width:180px;font-weight:700">${m.name}</div>
       <input data-mid="${m.id}" value="${map[m.id]||''}" placeholder="/data/data/..." style="flex:1"/>
+      <input data-uid="${m.id}" value="${urls[m.id]||''}" placeholder="https://..." style="flex:1"/>
       <button data-save="${m.id}">Guardar</button>
+      <button data-open="${m.id}">Abrir URL</button>
     `;
     host.appendChild(row);
   });
