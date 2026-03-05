@@ -104,7 +104,6 @@ function renderProyectos(){
       <div class="small">Próximo: ${p.next || '—'}</div>
       <div class="small">Ruta local: ${p.path || '—'}</div>
       <div class="small">URL: ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">${p.url}</a>` : '—'}</div>
-      <div class="small">URL local: ${p.url_local ? `<a href="${p.url_local}" target="_blank" rel="noopener">${p.url_local}</a>` : '—'}</div>
       <div class="row">
         <button data-id="${p.id}" class="edit">Editar</button>
         <button data-id="${p.id}" class="del">Eliminar</button>
