@@ -34,6 +34,10 @@ python3 -m http.server 8090
 ```
 Luego abre: `http://127.0.0.1:8090/`
 
+## Manual (GitHub)
+- Archivo: `manual.html`
+- En GitHub Pages: `https://doradoponcedeleon.github.io/centro-operativo-dorado/manual.html`
+
 ## Sincronización (Supabase sin login)
 Este proyecto puede sincronizar datos entre dispositivos usando Supabase sin login.
 
