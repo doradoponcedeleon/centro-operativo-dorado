@@ -60,13 +60,6 @@
         <button id="btn-new" class="primary">+ Nuevo</button>
       </div>
 
-      <div class="card" style="margin-bottom:12px">
-        <div class="row">
-          <span class="small">Url Local:</span>
-          <input id="url-local-proyectos" placeholder="http://127.0.0.1:8000/..." />
-        </div>
-      </div>
-
       <div class="card">
         <div class="row">
           <input id="q" placeholder="Buscar por nombre, etiqueta o estado"/>
@@ -95,12 +88,6 @@
 
     <section id="view-modulos" class="view hidden">
       <h1>Módulos</h1>
-      <div class="card" style="margin-bottom:12px">
-        <div class="row">
-          <span class="small">Url Local:</span>
-          <input id="url-local-modulos" placeholder="http://127.0.0.1:8000/..." />
-        </div>
-      </div>
       <div class="card" style="margin-bottom:12px">
         <div class="small">Guarda la ruta local (Termux) para cada módulo:</div>
         <div class="row" style="margin:8px 0">
@@ -166,6 +153,8 @@
       <input id="p-path" placeholder="/data/data/com.termux/files/home/..."/>
       <label>URL del proyecto</label>
       <input id="p-url" placeholder="https://..."/>
+      <label>URL local del proyecto</label>
+      <input id="p-url-local" placeholder="http://127.0.0.1:8000/..."/>
       <label>Notas</label>
       <textarea id="p-notas" rows="4"></textarea>
       <div class="row">

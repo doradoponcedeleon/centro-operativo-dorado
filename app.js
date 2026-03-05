@@ -24,6 +24,7 @@ let MODULES = [
 const MODULES_KEY = 'cod-module-paths-v1';
 const MODULES_LIST_KEY = 'cod-module-list-v1';
 const MODULES_URL_KEY = 'cod-module-url-v1';
+const MODULES_LOCAL_URL_KEY = 'cod-module-local-url-v1';
 
 const SUPABASE_URL = 'https://yxyzggisvwjjgxydativ.supabase.co';
 const SUPABASE_ANON = 'sb_publishable_dnchkTsAhIxINM97-Si6yw_eWeZ9fDI';
@@ -103,6 +104,7 @@ function renderProyectos(){
       <div class="small">Próximo: ${p.next || '—'}</div>
       <div class="small">Ruta local: ${p.path || '—'}</div>
       <div class="small">URL: ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">${p.url}</a>` : '—'}</div>
+      <div class="small">URL local: ${p.url_local ? `<a href="${p.url_local}" target="_blank" rel="noopener">${p.url_local}</a>` : '—'}</div>
       <div class="row">
         <button data-id="${p.id}" class="edit">Editar</button>
         <button data-id="${p.id}" class="del">Eliminar</button>
@@ -135,6 +137,7 @@ function openDialog(p){
   $('p-notas').value = p?.notas || '';
   $('p-path').value = p?.path || '';
   $('p-url').value = p?.url || '';
+  $('p-url-local').value = p?.url_local || '';
   $('dlg-title').textContent = p ? 'Editar proyecto' : 'Nuevo proyecto';
 }
 
@@ -148,7 +151,8 @@ function upsertProject(){
     next: $('p-next').value.trim(),
     notas: $('p-notas').value.trim(),
     path: $('p-path').value.trim(),
-    url: $('p-url').value.trim()
+    url: $('p-url').value.trim(),
+    url_local: $('p-url-local').value.trim()
   };
   const idx = state.proyectos.findIndex(p=>p.id===id);
   if(idx>=0) state.proyectos[idx]=data; else state.proyectos.push(data);
@@ -351,6 +355,12 @@ function loadModuleUrls(){
 function saveModuleUrls(map){
   localStorage.setItem(MODULES_URL_KEY, JSON.stringify(map));
 }
+function loadModuleLocalUrls(){
+  try{ return JSON.parse(localStorage.getItem(MODULES_LOCAL_URL_KEY) || '{}'); }catch(e){ return {}; }
+}
+function saveModuleLocalUrls(map){
+  localStorage.setItem(MODULES_LOCAL_URL_KEY, JSON.stringify(map));
+}
 
 function loadModuleList(){
   try{ return JSON.parse(localStorage.getItem(MODULES_LIST_KEY) || '[]'); }catch(e){ return []; }
@@ -370,6 +380,7 @@ function renderModulePaths(){
   if(!host) return;
   const map = loadModulePaths();
   const urls = loadModuleUrls();
+  const localUrls = loadModuleLocalUrls();
   host.innerHTML = '';
   const allModules = MODULES.concat(loadModuleList());
   allModules.forEach(m=>{
@@ -379,8 +390,10 @@ function renderModulePaths(){
       <div style="min-width:180px;font-weight:700">${m.name}</div>
       <input data-mid="${m.id}" value="${map[m.id]||''}" placeholder="/data/data/..." style="flex:1"/>
       <input data-uid="${m.id}" value="${urls[m.id]||''}" placeholder="https://..." style="flex:1"/>
+      <input data-lid="${m.id}" value="${localUrls[m.id]||''}" placeholder="http://127.0.0.1:8000/..." style="flex:1"/>
       <button data-save="${m.id}">Guardar</button>
       <a class="openlink" href="${(urls[m.id]||"#")}" target="_blank" rel="noopener">Abrir URL</a>
+      <a class="openlink" href="${(localUrls[m.id]||"#")}" target="_blank" rel="noopener">Abrir Local</a>
     `;
     host.appendChild(row);
   });
@@ -388,9 +401,17 @@ function renderModulePaths(){
     const id = e.target.getAttribute('data-save');
     if(!id) return;
     const input = host.querySelector(`input[data-mid="${id}"]`);
+    const inputUrl = host.querySelector(`input[data-uid="${id}"]`);
+    const inputLocal = host.querySelector(`input[data-lid="${id}"]`);
     const map = loadModulePaths();
+    const urls = loadModuleUrls();
+    const localUrls = loadModuleLocalUrls();
     map[id] = input.value.trim();
+    urls[id] = inputUrl.value.trim();
+    localUrls[id] = inputLocal.value.trim();
     saveModulePaths(map);
+    saveModuleUrls(urls);
+    saveModuleLocalUrls(localUrls);
   });
 }
 
