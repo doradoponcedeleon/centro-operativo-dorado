@@ -26,6 +26,7 @@ body{
   inset:0;
   pointer-events:none;
   z-index:0;
+  display:none;
 }
 .desk-edge{
   position:absolute;
