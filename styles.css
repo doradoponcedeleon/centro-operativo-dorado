@@ -51,8 +51,9 @@ body{
   content:"";
   position:absolute; inset:18px;
   background:
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.08), rgba(255,255,255,0.08) 2px, transparent 2px, transparent 18px);
-  border:1px dashed rgba(255,255,255,0.15);
+    linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.04), rgba(255,255,255,0.04) 1px, transparent 1px, transparent 26px);
+  border:1px solid rgba(255,255,255,0.10);
   border-radius:12px;
 }
 .board-left{left:20px; transform:rotate(-2deg);}
@@ -88,7 +89,7 @@ body{
   flex-direction:column;
   gap:12px;
   padding:14px 14px 10px;
-  border-bottom:2px solid #2a2f3a;
+  border-bottom:1px solid rgba(209,163,90,0.18);
   background:
     linear-gradient(180deg, rgba(18,24,32,0.95), rgba(15,23,42,0.92)),
     radial-gradient(600px 120px at 20% -30px, rgba(134,168,109,0.25), transparent 70%);
