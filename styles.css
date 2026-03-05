@@ -38,6 +38,7 @@ body{
   box-shadow:0 -12px 30px rgba(0,0,0,0.4);
 }
 .board{
+  display:none;
   position:absolute;
   top:90px;
   width:190px;
@@ -57,6 +58,7 @@ body{
 .board-left{left:20px; transform:rotate(-2deg);}
 .board-right{right:20px; transform:rotate(2deg);}
 .cabinet{
+  display:none;
   position:absolute;
   bottom:140px;
   width:160px;
