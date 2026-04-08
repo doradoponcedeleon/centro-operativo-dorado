@@ -45,6 +45,21 @@ function load(){
     $('sync-status').textContent = 'Sincronización: error al leer';
   }
 }
+
+function loadFromLocalStoragePreferV1(){
+  try{
+    const raw = localStorage.getItem('cod-data-v1') || localStorage.getItem('cod_data-v1') || localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const data = JSON.parse(raw);
+      state.proyectos = data.proyectos || [];
+      state.bitacora = data.bitacora || [];
+      return true;
+    }
+  }catch(e){
+    $('sync-status').textContent = 'Sincronización: error al leer';
+  }
+  return false;
+}
 function save(){
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   scheduleCloudSync();
@@ -268,7 +283,11 @@ async function supaFetch(path, options={}){
   const t = setTimeout(()=>ctrl.abort(), 6000);
   try{
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, { ...options, headers, signal: ctrl.signal });
-    if(!res.ok) throw new Error('Supabase error');
+    if(!res.ok){
+      const text = await res.text().catch(()=> '');
+      console.error('Supabase error:', res.status, text);
+      throw new Error(`Supabase error ${res.status}`);
+    }
     return res.status === 204 ? null : res.json();
   } finally {
     clearTimeout(t);
@@ -293,8 +312,21 @@ async function loadFromCloud(){
     }
     $('sync-status').textContent = 'Sincronización: sin datos';
   }catch(e){
-    $('sync-status').textContent = 'Sincronización: error al enviar';
+    console.error('Error loadFromCloud:', e);
+    $('sync-status').textContent = 'Sincronización: error al leer';
   }
+}
+
+async function cargarDatosIniciales(){
+  // 1) LocalStorage (clave solicitada)
+  loadFromLocalStoragePreferV1();
+  renderDashboard();
+  renderProyectos();
+  renderBitacora();
+  renderModulePaths();
+
+  // 2) Supabase (si hay datos, sobrescribe con lo más actualizado)
+  await loadFromCloud();
 }
 
 let syncTimer = null;
@@ -321,7 +353,10 @@ async function syncToCloud(){
       body: JSON.stringify([payload])
     });
     $('sync-status').textContent = 'Sincronización: OK (enviado)';
-  }catch(e){}
+  }catch(e){
+    console.error('Error syncToCloud:', e);
+    $('sync-status').textContent = 'Sincronización: error al enviar';
+  }
 }
 
 
@@ -467,11 +502,6 @@ function bind(){
   });
 }
 
-load();
 bind();
-renderDashboard();
-renderProyectos();
-renderBitacora();
-renderModulePaths();
 setView('dashboard');
-loadFromCloud();
+cargarDatosIniciales();
