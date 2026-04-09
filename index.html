@@ -97,6 +97,7 @@
           <input id="new-module-path" placeholder="/data/data/..." />
           <input id="new-module-url" placeholder="https://..." />
           <button id="btn-add-module">Agregar módulo</button>
+          <button id="btn-clear-modules" style="background:#a94442;color:white;">🗑 Borrar módulos</button>
         </div>
         <div id="module-paths" class="list"></div>
       </div>
@@ -166,5 +167,19 @@
   </dialog>
 
   <script src="app.js"></script>
+  <script>
+    const btnClearModules = document.getElementById("btn-clear-modules");
+    if (btnClearModules) {
+      btnClearModules.addEventListener("click", () => {
+        if (confirm("¿Seguro que deseas borrar todos los módulos guardados?")) {
+          localStorage.removeItem("modulos");
+          localStorage.removeItem("modulos_config");
+          localStorage.removeItem("modulos_data");
+          alert("Módulos borrados correctamente");
+          location.reload();
+        }
+      });
+    }
+  </script>
 </body>
 </html>
