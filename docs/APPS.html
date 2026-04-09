@@ -29,10 +29,51 @@
   <main class="wrap">
     <section class="view">
       <h1>PAGINA DE APPS</h1>
-      <div class="card">
-        <p class="small">Aquí podrás organizar accesos directos a tus aplicaciones o herramientas.</p>
+      <div class="grid">
+        <div class="card">
+          <p class="small">Aquí podrás organizar accesos directos a tus aplicaciones o herramientas.</p>
+        </div>
+        <div class="card">
+          <div class="row">
+            <img src="https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados-v2/apple-touch-icon.png" alt="Sonidos Sagrados" style="width:72px;height:72px;border-radius:16px;border:1px solid rgba(255,255,255,0.12);"/>
+            <div>
+              <h3>Sonidos Sagrados</h3>
+              <p class="small">Disponible · Web app / PWA</p>
+            </div>
+          </div>
+          <p class="small">Generador de sonidos sagrados, mantras y frecuencias armónicas.</p>
+          <div class="row">
+            <a class="navbtn link" href="https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados-v2/" target="_blank" rel="noopener">Abrir app</a>
+            <button class="navbtn" type="button" id="installSonidosBtn">Instalar app</button>
+          </div>
+          <p class="small" id="installSonidosHelp">En Android/iPad compatible, usa Instalar app o Añadir a pantalla de inicio.</p>
+        </div>
       </div>
     </section>
   </main>
+  <script>
+    let sonidosInstallPrompt = null;
+    const installBtn = document.getElementById("installSonidosBtn");
+    const helpText = document.getElementById("installSonidosHelp");
+
+    window.addEventListener("beforeinstallprompt", (event) => {
+      event.preventDefault();
+      sonidosInstallPrompt = event;
+    });
+
+    if (installBtn) {
+      installBtn.addEventListener("click", async () => {
+        if (sonidosInstallPrompt) {
+          sonidosInstallPrompt.prompt();
+          await sonidosInstallPrompt.userChoice;
+          sonidosInstallPrompt = null;
+          return;
+        }
+        if (helpText) {
+          helpText.textContent = "Para instalarla, abre la app en Chrome o Safari y usa Instalar app / Añadir a pantalla de inicio.";
+        }
+      });
+    }
+  </script>
 </body>
 </html>
