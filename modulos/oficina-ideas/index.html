@@ -83,5 +83,30 @@
   </dialog>
 
   <script src="app.js"></script>
+
+<button onclick="borrarModulos()" style="
+  background:#a94442;
+  color:white;
+  padding:12px 18px;
+  border:none;
+  border-radius:12px;
+  margin:10px;
+">
+🗑 Borrar módulos
+</button>
+
+
+<script>
+function borrarModulos(){
+  if(confirm("¿Seguro que deseas borrar todos los módulos guardados?")){
+    localStorage.removeItem("modulos");
+    localStorage.removeItem("modulos_config");
+    localStorage.removeItem("modulos_data");
+    alert("Módulos borrados correctamente");
+    location.reload();
+  }
+}
+</script>
+
 </body>
 </html>
