@@ -30,7 +30,7 @@
     <section class="view">
       <h1>PAGINA DE APPS</h1>
       <div class="grid">
-        <div class="card">
+        <div class="card" data-app="sonidos-sagrados">
           <p class="small">Aquí podrás organizar accesos directos a tus aplicaciones o herramientas.</p>
         </div>
         <div class="card">
@@ -43,37 +43,55 @@
           </div>
           <p class="small">Generador de sonidos sagrados, mantras y frecuencias armónicas.</p>
           <div class="row">
-            <a class="navbtn link" href="https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados-v2/" target="_blank" rel="noopener">Abrir app</a>
-            <button class="navbtn" type="button" id="installSonidosBtn">Instalar app</button>
+            <button class="navbtn link" type="button" onclick="abrirApp()">Abrir app</button>
+            <button class="navbtn" type="button" onclick="instalarApp()">Instalar app</button>
           </div>
+          <div class="estado-app" id="estado-sonidos"></div>
           <p class="small" id="installSonidosHelp">En Android/iPad compatible, usa Instalar app o Añadir a pantalla de inicio.</p>
         </div>
       </div>
     </section>
   </main>
   <script>
-    let sonidosInstallPrompt = null;
-    const installBtn = document.getElementById("installSonidosBtn");
-    const helpText = document.getElementById("installSonidosHelp");
+    const appId = "sonidos-sagrados";
+    const appUrl = "https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados-v2/";
 
-    window.addEventListener("beforeinstallprompt", (event) => {
-      event.preventDefault();
-      sonidosInstallPrompt = event;
+    function detectarInstalacion() {
+      const estado = document.getElementById("estado-sonidos");
+
+      if (window.matchMedia("(display-mode: standalone)").matches) {
+        estado.innerHTML = "✅ Instalada";
+        estado.style.color = "#00ffcc";
+      } else {
+        estado.innerHTML = "🌐 No instalada";
+        estado.style.color = "#ffaa00";
+      }
+    }
+
+    let deferredPrompt;
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
     });
 
-    if (installBtn) {
-      installBtn.addEventListener("click", async () => {
-        if (sonidosInstallPrompt) {
-          sonidosInstallPrompt.prompt();
-          await sonidosInstallPrompt.userChoice;
-          sonidosInstallPrompt = null;
-          return;
-        }
-        if (helpText) {
-          helpText.textContent = "Para instalarla, abre la app en Chrome o Safari y usa Instalar app / Añadir a pantalla de inicio.";
-        }
-      });
+    function instalarApp() {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(() => {
+          deferredPrompt = null;
+          detectarInstalacion();
+        });
+      } else {
+        alert("Para instalarla:\n1. Abre la app\n2. Menú del navegador\n3. Añadir a pantalla de inicio");
+      }
     }
+
+    function abrirApp() {
+      window.open(appUrl, "_blank");
+    }
+
+    window.onload = detectarInstalacion;
   </script>
 </body>
 </html>
