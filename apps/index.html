@@ -1,194 +1,256 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>APPS - Centro Operativo Dorado</title>
-  <link rel="stylesheet" href="../styles.css"/>
-
-<style>
-  body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#07111f;
-    color:white;
-    padding:20px;
-  }
-  .menu{
-    display:flex;
-    flex-wrap:wrap;
-    gap:8px;
-    margin-bottom:20px;
-  }
-  .btn{
-    display:inline-block;
-    padding:12px 16px;
-    border-radius:12px;
-    background:#18304d;
-    color:white;
-    text-decoration:none;
-  }
-  .card{
-    background:#0d1d31;
-    border-radius:18px;
-    padding:20px;
-  }
-  h1{margin-top:0}
-</style>
-
-
-<style>
-.topbar{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:space-between;
-  align-items:center;
-  margin-bottom:20px;
-}
-.brand{
-  font-size:20px;
-  font-weight:bold;
-}
-.menu{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-}
-.btn{
-  padding:10px 14px;
-  border-radius:10px;
-  background:#1e3a5f;
-  color:white;
-  text-decoration:none;
-}
-.btn-gold{
-  background:#c79a3f;
-}
-</style>
-
+  <style>
+    :root{
+      --bg:#041225;
+      --panel:#0b2038;
+      --panel2:#0d2744;
+      --line:rgba(255,255,255,.08);
+      --text:#f3f6fb;
+      --muted:#b7c4d3;
+      --gold1:#6b4a1f;
+      --gold2:#3f2a12;
+      --btn:#18385c;
+      --shadow:0 10px 28px rgba(0,0,0,.35);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#031022 0%,#03152d 100%);
+      color:var(--text);
+      min-height:100vh;
+    }
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px;
+    }
+    .topbar{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:12px;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-size:18px;
+      font-weight:700;
+      background:linear-gradient(180deg, rgba(20,37,60,.95), rgba(10,22,38,.95));
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:10px 14px;
+      box-shadow:var(--shadow);
+    }
+    .brand img{
+      width:28px;
+      height:28px;
+      border-radius:8px;
+      object-fit:cover;
+    }
+    .menu{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      color:#fff;
+      background:linear-gradient(180deg,#21456d 0%, #173555 100%);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:10px 14px;
+      box-shadow:var(--shadow);
+      font-size:14px;
+    }
+    .btn-gold{
+      background:linear-gradient(180deg,#7b5728 0%, #4c3317 100%);
+    }
+    .hero{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      background:linear-gradient(180deg, rgba(16,35,58,.98), rgba(11,25,42,.98));
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:14px;
+      margin-bottom:14px;
+      box-shadow:var(--shadow);
+    }
+    .hero-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+      font-size:17px;
+    }
+    .hero-left img{
+      width:30px;
+      height:30px;
+      border-radius:8px;
+      object-fit:cover;
+    }
+    .hero-actions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:8px 0 16px 0;
+      font-size:24px;
+    }
+    .back-btn{
+      display:inline-flex;
+      margin-bottom:14px;
+      text-decoration:none;
+      color:#fff;
+      background:linear-gradient(180deg,#6f4b20 0%, #472d14 100%);
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:12px;
+      padding:10px 14px;
+      box-shadow:var(--shadow);
+      font-weight:700;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+    }
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr}
+    }
+    .card{
+      background:linear-gradient(180deg, rgba(12,33,58,.98), rgba(10,28,49,.98));
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:14px;
+      box-shadow:var(--shadow);
+      min-height:220px;
+    }
+    .card h2{
+      margin:10px 0 12px 0;
+      font-size:18px;
+    }
+    .muted{
+      color:var(--muted);
+      line-height:1.45;
+      font-size:14px;
+    }
+    .app-head{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+    }
+    .app-icon{
+      width:52px;
+      height:52px;
+      border-radius:14px;
+      object-fit:cover;
+      flex:0 0 52px;
+    }
+    .app-actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:14px 0 8px 0;
+    }
+    .status{
+      color:#f2b34b;
+      font-weight:700;
+      margin:8px 0;
+    }
+  </style>
 </head>
 <body>
+  <div class="wrap">
 
-<div class="topbar">
-  <div class="brand">
-    🚀 Centro Operativo Dorado
-  </div>
-  <div class="menu">
-    <a class="btn" href="/centro-operativo-dorado/">Inicio</a>
-    <a class="btn" href="/centro-operativo-dorado/">Dashboard</a>
-    <a class="btn" href="/centro-operativo-dorado/">Módulos</a>
-    <a class="btn btn-gold" href="/centro-operativo-dorado/apps/">APPS</a>
-    <a class="btn" href="/centro-operativo-dorado/ideas/">Ideas</a>
-  </div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:15px;">
-  <a class="btn" href="/centro-operativo-dorado/">Inicio</a>
-  <a class="btn" href="/centro-operativo-dorado/">Dashboard</a>
-  <a class="btn" href="/centro-operativo-dorado/">Módulos</a>
-  <a class="btn btn-gold" href="/centro-operativo-dorado/apps/">APPS</a>
-</div>
-
-  <div class="scene">
-    <div class="desk-edge"></div>
-    <div class="board board-left"></div>
-    <div class="board board-right"></div>
-    <div class="cabinet cab-left"></div>
-    <div class="cabinet cab-right"></div>
-  </div>
-
-  <header class="topbar">
-    <div class="brand">
-      <span class="mark">🐾</span>
-      <span>Centro Operativo Dorado</span>
+    <div class="topbar">
+      <div class="menu">
+        <a class="btn" href="/centro-operativo-dorado/">Inicio</a>
+        <a class="btn" href="/centro-operativo-dorado/">Dashboard</a>
+        <a class="btn" href="/centro-operativo-dorado/">Módulos</a>
+        <a class="btn btn-gold" href="/centro-operativo-dorado/apps/">APPS</a>
+        <a class="btn" href="/centro-operativo-dorado/ideas/">Ideas</a>
+      </div>
     </div>
-    <nav class="topnav">
-      <a class="navbtn" href="/centro-operativo-dorado/">Volver</a>
-      <a class="navbtn" href="../manual.html">Manual</a>
-    </nav>
-  </header>
 
-  <main class="wrap">
-    <section class="view">
-      <h1>APPS - Centro Operativo Dorado</h1>
-      <div class="row">
-        <a class="navbtn link" href="/centro-operativo-dorado/">Volver a la página principal</a>
+    <div class="hero">
+      <div class="hero-left">
+        <img src="/centro-operativo-dorado/assets/img/logo-cod.png" alt="Logo" onerror="this.style.display='none'">
+        <span>Centro Operativo Dorado</span>
       </div>
-      <div class="grid">
-        <div class="card" data-app="sonidos-sagrados">
-          <h3>Generador de Sonidos Sagrados</h3>
-          <p class="small">Acceso directo a la app de sonidos y mantras.</p>
-          <a class="navbtn" href="./generador-de-sonidos-sagrados/index.html">Abrir</a>
-        </div>
-        <div class="card">
-          <div class="row">
-            <img src="https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados-v2/apple-touch-icon.png" alt="Sonidos Sagrados" style="width:72px;height:72px;border-radius:16px;border:1px solid rgba(255,255,255,0.12);"/>
-            <div>
-              <h3>Sonidos Sagrados</h3>
-              <p class="small">Disponible · Web app / PWA</p>
-            </div>
-          </div>
-          <p class="small">Mantras, sonidos sagrados e instrumentos armónicos en una app instalable.</p>
-          <div class="row">
-            <button class="navbtn link" type="button" onclick="abrirApp()">Abrir app</button>
-            <button class="navbtn" type="button" onclick="instalarApp()">Instalar app</button>
-          </div>
-          <div class="estado-app" id="estado-sonidos"></div>
-          <p class="small" id="installSonidosHelp">En Android/iPad compatible, usa Instalar app o Añadir a pantalla de inicio.</p>
+      <div class="hero-actions">
+        <a class="btn btn-gold" href="/centro-operativo-dorado/">Volver</a>
+        <a class="btn btn-gold" href="/centro-operativo-dorado/manual/">Manual</a>
+      </div>
+    </div>
+
+    <h1>APPS - Centro Operativo Dorado</h1>
+
+    <a class="back-btn" href="/centro-operativo-dorado/">Volver a la página principal</a>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Generador de Sonidos Sagrados</h2>
+        <p class="muted">Acceso directo a la app de sonidos y mantras.</p>
+        <div class="app-actions">
+          <a class="btn btn-gold" href="https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados/" target="_blank" rel="noopener noreferrer">Abrir</a>
         </div>
       </div>
-    </section>
-  </main>
+
+      <div class="card">
+        <div class="app-head">
+          <img class="app-icon" src="/centro-operativo-dorado/assets/img/sonidos-sagrados.png" alt="Sonidos Sagrados" onerror="this.style.display='none'">
+          <div>
+            <h2 style="margin-top:0;">Sonidos Sagrados</h2>
+            <p class="muted" style="margin-top:0;">Disponible · Web app / PWA</p>
+          </div>
+        </div>
+
+        <p class="muted">Mantras, sonidos sagrados e instrumentos armónicos en una app instalable.</p>
+
+        <div class="app-actions">
+          <a class="btn btn-gold" href="https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados/" target="_blank" rel="noopener noreferrer">Abrir app</a>
+          <button class="btn btn-gold" onclick="instalarApp()">Instalar app</button>
+        </div>
+
+        <div class="status">📦 Disponible para instalar</div>
+        <p class="muted">En Android/iPad compatible, usa Instalar app o Añadir a pantalla de inicio.</p>
+      </div>
+    </div>
+
+  </div>
+
   <script>
-    const appId = "sonidos-sagrados";
-    const appUrl = "https://doradoponcedeleon.github.io/generador-de-sonidos-sagrados-v2/";
+    let deferredPrompt = null;
 
-    function detectarInstalacion() {
-      const estado = document.getElementById("estado-sonidos");
-
-      if (window.matchMedia("(display-mode: standalone)").matches) {
-        estado.innerHTML = "✅ Abierta como app";
-        estado.style.color = "#00ffcc";
-      } else {
-        estado.innerHTML = "📦 Disponible para instalar";
-        estado.style.color = "#ffaa00";
-      }
-    }
-
-    let deferredPrompt;
-
-    window.addEventListener("beforeinstallprompt", (e) => {
+    window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
     });
 
-    function instalarApp() {
+    async function instalarApp(){
       if (deferredPrompt) {
         deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => {
-          deferredPrompt = null;
-          detectarInstalacion();
-        });
+        await deferredPrompt.userChoice;
+        deferredPrompt = null;
       } else {
-        alert("Para instalarla:\n1. Abre la app\n2. Menú del navegador\n3. Añadir a pantalla de inicio");
+        alert('Si no aparece la instalación automática, usa el menú del navegador y selecciona "Añadir a pantalla de inicio".');
       }
     }
-
-    function abrirApp() {
-      window.open(appUrl, "_blank");
-    }
-
-    window.onload = detectarInstalacion;
   </script>
 </body>
 </html>
