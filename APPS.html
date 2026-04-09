@@ -63,10 +63,10 @@
       const estado = document.getElementById("estado-sonidos");
 
       if (window.matchMedia("(display-mode: standalone)").matches) {
-        estado.innerHTML = "✅ Instalada";
+        estado.innerHTML = "✅ Abierta como app";
         estado.style.color = "#00ffcc";
       } else {
-        estado.innerHTML = "🌐 No instalada";
+        estado.innerHTML = "📦 Disponible para instalar";
         estado.style.color = "#ffaa00";
       }
     }
